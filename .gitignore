@@ -1,0 +1,4 @@
+monuments_api/Lib/
+venv/
+*.pyc
+.idea
