@@ -1,7 +1,9 @@
+# -*- coding: utf-8 -*-
+
+from django.http import HttpResponse
+from django.views.generic import DetailView, ListView, View
+
 from json import dumps
-
-from django.views.generic import DetailView, ListView
-
 # see https://ccbv.co.uk/ for reference
 
 class MonumentView(DetailView):
@@ -16,17 +18,16 @@ class MonumentView(DetailView):
         },
         'info': {}
     }
+    pk_url_kwarg = 'monument_id'
 
-    def dispatch(self, request, *args, **kwargs):
-        if not self.pk_url_kwarg:
-            self.pk_url_kwarg = kwargs['monument_id']
-        return super(MonumentView, self).dispatch(self, request, pk_url_kwarg=self.pk_url_kwarg, *args, **kwargs)
+    def get_object(self, queryset=None):
+        # TODO: look up the Monument
+        return None
 
     def get(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        context = self.get_context_data(object=self.object)
-        self.mock_json['id'] = self.pk_url_kwarg or None
-        return dumps(self.mock_json)
+        self.mock_json['id'] = self.kwargs.get(self.pk_url_kwarg, None)
+        json_content = dumps(self.mock_json)
+        return HttpResponse(json_content)
 
 class MonumentsNearMe(ListView):
     pass
